@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   StyleSheet,
-  Text,
   TextInput,
   View,
   Button,
@@ -26,6 +26,21 @@ const StartLoginScreen = ({navigation}) => {
   const [emailResult, setEmailresult] = useState(false);
   const [passResult, setPassresult] = useState(false);
 
+  useEffect(() => {
+    getData();
+  });
+
+  const getData = () => {
+    try {
+      AsyncStorage.getItem('UserName').then(value => {
+        if (value != null) {
+          navigation.navigate(value);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   let emailcheck =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
@@ -36,7 +51,7 @@ const StartLoginScreen = ({navigation}) => {
 
     if (enteredEmail === '') {
       SetEmailText(enteredEmail);
-      emailerror = 'Please enter all required fields!';
+      emailerror = 'Please enter your EmailID!';
     } else if (condition === false) {
       emailerror = 'Please enter a valid Email ID !';
       SetEmailText(enteredEmail);
@@ -51,7 +66,7 @@ const StartLoginScreen = ({navigation}) => {
     let condition = passcheck.test(String(enteredPassword));
 
     if (passtext === '') {
-      passerror = 'Please enter all required fields !';
+      passerror = 'Please your password !';
 
       SetPasswordText(enteredPassword);
     } else if (condition === false || passtext.length < 6) {
@@ -68,34 +83,37 @@ const StartLoginScreen = ({navigation}) => {
     }
   };
   //by using props as well as navigation pass is possible
-  const OnButtonPress = () => {
+  const OnButtonPress = async () => {
     if (emailResult === true && passResult === true) {
-      navigation.navigate('Screen_B', {
-        userName: emailText,
-        Password: passwordText,
-      });
-    } else {
-      Alert.alert(
-        'Login Failure',
-        String(emailerror + '\n' + '\n' + passerror),
-        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-      );
-    }
-  };
-
-  const OnClearPress = () => {
-    if (emailText === '' && passwordText === '') {
-      Alert.alert('Login Page', 'The Text Fields are already empty !', [
+      try {
+        await AsyncStorage.setItem('UserName', 'Screen_B');
+        navigation.navigate('Screen_B', {
+          userName: emailText,
+          Password: passwordText,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (passwordText === '' || emailText === '') {
+      Alert.alert('Login Failure', String('Please enter all required fields'), [
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ]);
     }
-    SetEmailText('');
-    SetPasswordText('');
-    setEmailresult(false);
-    setPassresult(false);
-    emailerror = 'Please enter your Email ID !';
-    passerror = 'Please enter your password !';
   };
+
+  // const OnClearPress = () => {
+  //   if (emailText === '' && passwordText === '') {
+  //     Alert.alert('Login Page', 'The Text Fields are already empty !', [
+  //       {text: 'OK', onPress: () => console.log('OK Pressed')},
+  //     ]);
+  //   }
+  //   SetEmailText('');
+  //   SetPasswordText('');
+  //   setEmailresult(false);
+  //   setPassresult(false);
+  //   emailerror = 'Please enter your Email ID !';
+  //   passerror = 'Please enter your password !';
+  // };
   return (
     <DismissKeyboard>
       <View style={styles.inputContainer}>
@@ -117,9 +135,6 @@ const StartLoginScreen = ({navigation}) => {
         <View style={styles.buttonContainer}>
           <View style={styles.buttonContainer}>
             <Button title="LOGIN" onPress={OnButtonPress} />
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button title="RESET" onPress={OnClearPress} color="#FF0000" />
           </View>
         </View>
       </View>
