@@ -26,10 +26,6 @@ const StartLoginScreen = ({navigation}) => {
   const [emailResult, setEmailresult] = useState(false);
   const [passResult, setPassresult] = useState(false);
 
-  useEffect(() => {
-    getData();
-  });
-
   const getData = () => {
     try {
       AsyncStorage.getItem('UserName').then(value => {
@@ -41,6 +37,11 @@ const StartLoginScreen = ({navigation}) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    getData();
+  });
+
   let emailcheck =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 

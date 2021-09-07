@@ -39,9 +39,9 @@ const ExitPage = ({route, navigation}) => {
   };
   return (
     <FlatList
+      horizontal
       keyExtractor={(item, index) => item.id}
       data={CATEGORIES}
-      numColumns={2}
       renderItem={renderGridItem}
     />
   );

@@ -2,11 +2,7 @@ import * as React from 'react';
 import {View, Text, Button} from 'react-native';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  NavigationContainer,
-  useRoute,
-  useNavigationState,
-} from '@react-navigation/native';
+import {useNavigationState} from '@react-navigation/native';
 
 const Results = ({navigation, route}) => {
   const previousRouteName = usePreviousRouteName();
